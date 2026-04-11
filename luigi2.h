@@ -6549,7 +6549,7 @@ void _UIClipboardWriteText(UIWindow *window, char *text) {
 		HGLOBAL memory = GlobalAlloc(GMEM_MOVEABLE | GMEM_ZEROINIT, _UIStringLength(text) + 1);
 		char *copy = (char *) GlobalLock(memory);
 		for (uintptr_t i = 0; text[i]; i++) copy[i] = text[i];
-		GlobalUnlock(copy);
+		GlobalUnlock(memory);
 		SetClipboardData(CF_TEXT, memory);
 		CloseClipboard();
 	}
