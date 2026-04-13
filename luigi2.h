@@ -5572,6 +5572,20 @@ UIWindow *UIWindowCreate(UIWindow *owner, uint32_t flags, const char *cTitle, in
 		XMapRaised(ui.display, window->window);
 	}
 
+    if (flags & UI_WINDOW_MAXIMIZE) {
+        XEvent e = {0};
+        e.type = ClientMessage;
+        e.xclient.window = window->window;
+        e.xclient.message_type = XInternAtom(ui.display, "_NET_WM_STATE", False);
+        e.xclient.format = 32;
+        e.xclient.data.l[0] = 1; // _NET_WM_STATE_ADD(add/set property);
+        e.xclient.data.l[1] = XInternAtom(ui.display, "_NET_WM_STATE_MAXIMIZED_HORZ", False);
+        e.xclient.data.l[2] = XInternAtom(ui.display, "_NET_WM_STATE_MAXIMIZED_VERT", False);
+        e.xclient.data.l[3] = 1; // normal application
+        XSendEvent(ui.display, DefaultRootWindow(ui.display), False, SubstructureNotifyMask | SubstructureRedirectMask, &e);
+        XFlush(ui.display);
+    }
+
 	if (flags & UI_WINDOW_CENTER_IN_OWNER) {
 		int x = 0, y = 0;
 		_UIWindowGetScreenPosition(owner, &x, &y);
